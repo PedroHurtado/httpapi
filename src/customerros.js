@@ -4,7 +4,7 @@ const Mixin = Base => class extends Base{
         if(Error.captureStackTrace){
             Error.captureStackTrace(this,NotFound)
         }
-        this.name = "NotFound";
+        this.name = name;
         this.code = code;
         this.date = Date.now();
     }
@@ -25,7 +25,7 @@ export class BadRequest extends Mixin(Error){
 
 export class Unauthorized extends Error{
     constructor(...params){
-        super(Unauthorized,401,...params)
+        super("Unauthorized",401,...params)
     }
 }
 
