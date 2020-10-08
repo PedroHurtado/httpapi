@@ -1,17 +1,17 @@
 //TODO estrategies singleton,value,factory,instance,etc...
 import { validate } from './validate.js'
 
-export singleton = function (...dependecies) {
+export singleton = function (key,...dependecies) {
     return () => { }
 }
 
-export instance = function (...dependecies) {
+export instance = function (key,...dependecies) {
     return () => { }
 }
-export value = function (...dependecies) {
+export value = function (key,...dependecies) {
     return () => { }
 }
-export factory = function(...dependecies){
+export factory = function(key,...dependecies){
     return ()=>{}
  }
 export class IocContainer {
