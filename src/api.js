@@ -55,7 +55,7 @@ const resolveUrl = function (path, query) {
 }
 
 
-export const api = (url, middelwares = DEFAULT_MIDDLEWARES, interceptors = null, useDefaultInterceptors = true) => {
+export const api = (url, middelwares, interceptors = null, useDefaultInterceptors = true) => {
     validateUrl(url, 'url')
     if (useDefaultInterceptors) {
         interceptors = { ...DEFAULTINTERCEPTORS, ...interceptors || {} }
@@ -65,7 +65,7 @@ export const api = (url, middelwares = DEFAULT_MIDDLEWARES, interceptors = null,
     return {
         url,
         resolveUrl,
-        middelwares: before(middelwares),
+        middelwares: before(middelwares || DEFAULT_MIDDLEWARES),
         interceptors,
         get,
         post,
