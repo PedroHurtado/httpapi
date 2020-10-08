@@ -21,7 +21,7 @@ export class IocContainer {
     set(key, strategy) {
         validate(key, 'key is required');
         validate(strategy, 'strategy is required');
-        this._dependencies.set(key, strategy)
+        this._dependencies.set(key, strategy.bind(this))
     }
     get(key) {
         validate(key, 'key is required');
@@ -29,6 +29,6 @@ export class IocContainer {
         if (!strategy) {
             validate(`${key} dependecies is not defined`)
         }
-        return strategy.bind(this)();
+        return strategy();
     }
 }
