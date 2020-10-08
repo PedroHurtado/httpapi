@@ -42,7 +42,7 @@ const patch = async function (url, options) {
 }
 const deletehttp = async function (url, options) {
     validateUrl(url)
-    return exec(url, "DELETE", options, this.middelwares, this.interceptors);
+    return await exec(url, "DELETE", options, this.middelwares, this.interceptors);
 }
 const resolveUrl = function (path, query) {
     path = path || '';
