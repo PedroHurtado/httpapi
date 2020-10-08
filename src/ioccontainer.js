@@ -1,19 +1,18 @@
 //TODO estrategies singleton,value,factory,instance,etc...
 import { validate } from './validate.js'
 
-export singleton = function (key,...dependecies) {
+export const singleton = function (key, ...dependecies) {
     return () => { }
 }
-
-export instance = function (key,...dependecies) {
+export const instance = function (key, ...dependecies) {
     return () => { }
 }
-export value = function (key,...dependecies) {
+export const value = function (key, ...dependecies) {
     return () => { }
 }
-export factory = function(key,...dependecies){
-    return ()=>{}
- }
+export const factory = function (key, ...dependecies) {
+    return () => { }
+}
 export class IocContainer {
     constructor() {
         this._dependencies = new Map();
