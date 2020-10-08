@@ -1,17 +1,21 @@
-//TODO estrategies singleton,value,factory,etc...
+//TODO estrategies singleton,value,factory,instance,etc...
 import {validate} from './validate.js'
 export class IocContainer{
     constructor(){
         this._dependencies = new Map();
+        this._caches = new Map();
     }
     set(key,strategy){
+        validate(key,'key is required');
+        validate(strategy,'strategy is required');
         this._dependencies.set(key,strategy)
     }
     get(key){
-        const strategy = this._dependencies.get(strategy)
+        validate(key,'key is required');
+        const strategy = this._dependencies.get(key)
         if(!strategy){
             validate(`${key} dependecies is not defined`)
         }
-        return strategy();
+        return strategy.bind(this)();
     }
 }

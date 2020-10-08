@@ -12,11 +12,11 @@ const createRequest = (url, method) => {
     return new Request(url, { method: method }),
 }
 
-const exec = async (url, method, options, middelwares, interceptors) => {
+const exec = async (url, method, options, middlewares, interceptors) => {
     let response
     const request = createRequest(url, method)
     try {
-        response = await middelwares(req, options)
+        response = await middlewares(req, options)
         return await after(request, response, interceptors)
     } catch (err) {
         throw err;
@@ -26,23 +26,23 @@ const exec = async (url, method, options, middelwares, interceptors) => {
 
 const get = async function (url, options) {
     validateUrl(url)
-    return await exec(url, "GET", options, this.middelwares, this.interceptors);
+    return await exec(url, "GET", options, this.middlewares, this.interceptors);
 }
 const post = async function (url, options) {
     validateUrl(url)
-    return await exec(url, "POST", options, this.middelwares, this.interceptors);
+    return await exec(url, "POST", options, this.middlewares, this.interceptors);
 }
 const put = async function (url, options) {
     validateUrl(url)
-    return await exec(url, "PUT", options, this.middelwares, this.interceptors);
+    return await exec(url, "PUT", options, this.middlewares, this.interceptors);
 }
 const patch = async function (url, options) {
     validateUrl(url)
-    return await exec(url, "PATH", options, this.middelwares, this.interceptors);
+    return await exec(url, "PATH", options, this.middlewares, this.interceptors);
 }
 const deletehttp = async function (url, options) {
     validateUrl(url)
-    return await exec(url, "DELETE", options, this.middelwares, this.interceptors);
+    return await exec(url, "DELETE", options, this.middlewares, this.interceptors);
 }
 const resolveUrl = function (path, query) {
     path = path || '';
@@ -55,7 +55,7 @@ const resolveUrl = function (path, query) {
 }
 
 
-export const api = (url, middelwares, interceptors = null, useDefaultInterceptors = true) => {
+export const api = (url, middlewares, interceptors = null, useDefaultInterceptors = true) => {
     validateUrl(url, 'url')
     if (useDefaultInterceptors) {
         interceptors = { ...DEFAULTINTERCEPTORS, ...interceptors || {} }
@@ -65,7 +65,7 @@ export const api = (url, middelwares, interceptors = null, useDefaultInterceptor
     return {
         url,
         resolveUrl,
-        middelwares: before(middelwares || DEFAULT_MIDDLEWARES),
+        middlewares: before(middlewares || DEFAULT_MIDDLEWARES),
         interceptors,
         get,
         post,
