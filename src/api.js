@@ -1,86 +1,61 @@
 import { DEFAULTINTERCEPTORS } from './interceptors.js'
-
+import before, { DEFAULT_MIDDLEWARES } from './before.js'
+import after from './after.js'
+import {validate} from './validate.js'
+ 
 const validateUrl = (url) => {
-    if (!url) {
-        throw `url is required`
-    }
+    validate(url,'url is required');
 }
 
-const checkApplicationJson = (request, applicationJson) => {
-    const { method, headers } = request;
-    if (
-        (method === "POST" || method === "PUT" || method === "PATCH")
-        && applicationJson
-    ) {
-        headers.set('content-type', 'application/json')
-    }
-    return request;
+
+const createRequest = (url, method) => {
+    return new Request(url, { method: method }),
 }
 
-const createRequest = (url, method, request) => {
-    let applyApplicationJson = false;
-    const { body } = (request = request || {});
-    if (body && !(body instanceof FormData)  && typeof body === 'object') {
-        request.body = JSON.stringify(body)
-        applyApplicationJson = true;
-    }
-    return checkApplicationJson(
-        new Request(url, { method: method, ...request }),
-        applyApplicationJson
-    )
-}
-
-const exec = async (url, method, request, interceptors) => {
-    let response, status;
-    const req = createRequest(url, method, request)
+const exec = async (url, method, options, middelwares, interceptors) => {
+    let response
+    const request = createRequest(url, method)
     try {
-        response = await fetch(req)
-        status = response.status;
+        response = await middelwares(req, options)
+        return await after(request, response, interceptors)
     } catch (err) {
         throw err;
     }
-    finally {
-        if (status) {
-            const _method = interceptors[req.method]
-            if (_method) {
-                const _interceptor = _method[status];
-                if (_interceptor) {
-                    return await _interceptor(req, response);
-                }
-            }
-        }
-    }
 }
 
 
-const get = async function (path, request) {
-    validateUrl(path)
-    const url = `${this.url}${path}`
-    return await exec(url, "GET", request, this.interceptors);
+const get = async function (url, options) {
+    validateUrl(url)
+    return await exec(url, "GET", options, this.middelwares, this.interceptors);
 }
-const post = async function (path, request) {
-    validateUrl(path)
-    const url = `${this.url}${path}`
-    return await exec(url, "POST", request, this.interceptors);
+const post = async function (url, options) {
+    validateUrl(url)
+    return await exec(url, "POST", options, this.middelwares, this.interceptors);
 }
-const put = async function (path, request) {
-    validateUrl(path, 'path')
-    const url = `${this.url}${path}`
-    return await exec(url, "PUT", request, this.interceptors);
+const put = async function (url, options) {
+    validateUrl(url)
+    return await exec(url, "PUT", options, this.middelwares, this.interceptors);
 }
-const patch = async function (path, request) {
-    validateUrl(path, 'path')
-    const url = `${this.url}${path}`
-    return await exec(url, "PATH", request, this.interceptors);
+const patch = async function (url, options) {
+    validateUrl(url)
+    return await exec(url, "PATH", options, this.middelwares, this.interceptors);
 }
-const deletehttp = async function (path, request) {
-    validateUrl(path, 'path')
-    const url = `${this.url}${path}`
-    return exec(url, "DELETE", request, this.interceptors);
+const deletehttp = async function (url, options) {
+    validateUrl(url)
+    return exec(url, "DELETE", options, this.middelwares, this.interceptors);
+}
+const resolveUrl = function (path, query) {
+    path = path || '';
+    query = query || {};
+    const url = new URL(path, this.url)
+    Object.entries(query).forEach(params => {
+        url.searchParams.append(params[0], encodeURIComponent(params[1]))
+    })
+    return url;
 }
 
 
-export const api = (url, interceptors = null, useDefaultInterceptors = true) => {
+export const api = (url, middelwares = DEFAULT_MIDDLEWARES, interceptors = null, useDefaultInterceptors = true) => {
     validateUrl(url, 'url')
     if (useDefaultInterceptors) {
         interceptors = { ...DEFAULTINTERCEPTORS, ...interceptors || {} }
@@ -89,6 +64,8 @@ export const api = (url, interceptors = null, useDefaultInterceptors = true) => 
     }
     return {
         url,
+        resolveUrl,
+        middelwares: before(middelwares),
         interceptors,
         get,
         post,

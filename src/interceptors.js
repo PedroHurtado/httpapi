@@ -5,7 +5,7 @@ import {
     ForBiden,
     NotAllowed,
     ServerError
-} from './customerros.js'
+} from './customerrors.js'
 
 const OK = async (req, res) => await res.json();
 const NOCONTENT = async (req,res)=>'';
