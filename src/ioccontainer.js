@@ -7,7 +7,7 @@ export const singleton = function (key, ...dependecies) {
 export const instance = function (key, ...dependecies) {
     return () => { }
 }
-export const value = function (key, ...dependecies) {
+export const value = function (key,value) {
     return () => { }
 }
 export const factory = function (key, ...dependecies) {
