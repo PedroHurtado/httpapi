@@ -11,7 +11,7 @@ export instance = function (...dependecies) {
 export value = function (...dependecies) {
     return () => { }
 }
-export instance = function(...dependecies){
+export factory = function(...dependecies){
     return ()=>{}
  }
 export class IocContainer {
